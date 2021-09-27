@@ -103,14 +103,15 @@ def CoinStart(pin):
     print("Number_Coin=", CounterCoin)
     # Send Number_Coin lên Pi4
     #txData = b'Number_Coin\n\r'
-    txCoin1 = 'Number_Coin:'
-    txCoin2 = str(CounterCoin)
     
-    uart0.write(txCoin1)
-    utime.sleep(0.1)
-    uart0.write(txCoin2)
-    utime.sleep(0.1)
-    uart0.write("\n\r")
+    txCoin1 = 'Number_Coin:'
+    uart0.write("Number_Coin:%d\n\r" % (CounterCoin))
+    #txCoin2 = str(CounterCoin)
+    #uart0.write(txCoin1)
+    #utime.sleep(0.1)
+    #uart0.write(txCoin2)
+    #utime.sleep(0.1)
+    #uart0.write("\n\r")
     
 # interrupt when coin wire trigger, FALLING
 Coin.irq(trigger = Pin.IRQ_FALLING, handler = CoinStart)
@@ -164,6 +165,7 @@ def Send_Pulse_to_Pi4(CounterEncoder):
     txEncoder = ""
     txEncoder = str(CounterEncoder)
     uart0.write("Encoder_Pulse:%s \n\r" % (txEncoder))
+    
 # -----Hàm tính điểm-----#
 def Score(Pulse):
     global Index1, Save_Point1, Save_Point2
@@ -198,7 +200,7 @@ def Play():
             txNumber_Point = "Number_Point\n\r"
             uart0.write(txNumber_Point)
             utime.sleep(2)
-            # Nếu quá 5 phút không có data từ Pi4 thì sẽ báo lỗi.
+         
             # Data Point from Pi4 to Pico
             # Pi4 send data with syntax : Xung:1000
             if('Xung' in rxPulse):
@@ -272,10 +274,7 @@ def Smain_irq(pin):
         Minus_Point = 0
         Pulse_NFC = 0
         Save_Point2 = 0
-    txPoint_NFC = str(Pulse_NFC)
-    uart0.write("Point_NFC:")
-    uart0.write(txPoint_NFC)
-    uart0.write("\n\r")
+    uart0.write("Point_NFC:%d\n\r" % (Pulse_NFC))
 S_main.irq(trigger = Pin.IRQ_FALLING, handler =  Smain_irq)
 
 #----- Irq fix point-----#
@@ -351,4 +350,3 @@ while True:
 
     
         
-
