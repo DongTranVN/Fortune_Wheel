@@ -163,10 +163,7 @@ _thread.start_new_thread(Uart, ())
 def Send_Pulse_to_Pi4(CounterEncoder):
     txEncoder = ""
     txEncoder = str(CounterEncoder)
-    uart0.write("Encoder_Pulse:")
-    uart0.write(txEncoder)
-    uart0.write("\n\r")
-
+    uart0.write("Encoder_Pulse:%s \n\r" % (txEncoder))
 # -----Hàm tính điểm-----#
 def Score(Pulse):
     global Index1, Save_Point1, Save_Point2
