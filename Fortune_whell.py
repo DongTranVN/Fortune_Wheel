@@ -4,7 +4,7 @@ import utime
 import _thread
 
 #-----Sensor_ban_dau-----#
-Sensor_Quang = Pin(11, Pin.IN, Pin.PULL_UP)
+Sensor_Optical = Pin(11, Pin.IN, Pin.PULL_UP)
 
 #-----Coin-----#
 # Chân Coin kết nối với interrupt
@@ -68,7 +68,6 @@ Save_Point1 = 0
 Save_Point2 = 0
 Minus_Point = 0
 
-
 #----- Gửi và nhận điểm từ NFC-----#
 Pulse_NFC = 0
 # Biến gửi điểm cho Pi4
@@ -82,7 +81,7 @@ Button_Fix = Pin(6, Pin.IN, Pin.PULL_UP)
 
 #----Hàm check vị trí ban đầu khi khởi động------#
 #def Sensor_Start():
-while(Sensor_Quang.value() != 0):
+while(Sensor_Optical.value() != 0):
 
     # Run Motor
     #PUL.duty_u16(52428)
@@ -90,10 +89,8 @@ while(Sensor_Quang.value() != 0):
     utime.sleep(1)
     PUL.off()
     utime.sleep(1)
-
     # Stop Motor
 PUL.off()
-
 
 #----- Interrupt khi có Coin----- #
 def CoinStart(pin):
@@ -103,15 +100,8 @@ def CoinStart(pin):
     print("Number_Coin=", CounterCoin)
     # Send Number_Coin lên Pi4
     #txData = b'Number_Coin\n\r'
-    
     txCoin1 = 'Number_Coin:'
     uart0.write("Number_Coin:%d\n\r" % (CounterCoin))
-    #txCoin2 = str(CounterCoin)
-    #uart0.write(txCoin1)
-    #utime.sleep(0.1)
-    #uart0.write(txCoin2)
-    #utime.sleep(0.1)
-    #uart0.write("\n\r")
     
 # interrupt when coin wire trigger, FALLING
 Coin.irq(trigger = Pin.IRQ_FALLING, handler = CoinStart)
@@ -123,9 +113,7 @@ def Bt_Play_Irq(pin):
     Check_Play = 1
 # Ngắt khi nhấn Button 
 Button_Play.irq(trigger = Pin.IRQ_FALLING, handler = Bt_Play_Irq)
-
-
-    
+   
 #----- Interrupt khi có Encoder-----#
 def Counter_Encoder(pin):
     global CounterEncoder, rotation2
@@ -172,7 +160,6 @@ def Score(Pulse):
     global Pulse_list, Point_list
     # Scoring from Pulse of Pi4.        
     Index1 = (Pulse_list.index(Pulse))
-    
     Save_Point1 = Point_list[Index1]
     print(Save_Point1)
     # Kéo chân A.main()
@@ -200,7 +187,7 @@ def Play():
             txNumber_Point = "Number_Point\n\r"
             uart0.write(txNumber_Point)
             utime.sleep(2)
-         
+            # Nếu quá 5 phút không có data từ Pi4 thì sẽ báo lỗi.
             # Data Point from Pi4 to Pico
             # Pi4 send data with syntax : Xung:1000
             if('Xung' in rxPulse):
@@ -320,7 +307,7 @@ def Fix_Location():
     global CounterEncoder, rotation1, rotation2, Pulse, Save_Pulse
     # Khi bị lệch vị trí thì sẽ chạy về vị trí ban đầu
     if("Start" in rxPulse):
-        while(Sensor_Quang.value() != 0):
+        while(Sensor_Optical.value() != 0):
             # Run Motor
             #PUL.duty_u16(52428)
             PUL.on()
