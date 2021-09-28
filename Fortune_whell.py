@@ -143,10 +143,7 @@ def Uart():
         print(rxPulse)
         #Clear buffer
         rxPulse1 =""
-
 _thread.start_new_thread(Uart, ())
-
-    
 
 #---- Hàm gửi xung Encoder lên Pi4----#                  
 def Send_Pulse_to_Pi4(CounterEncoder):
